@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package api.node_v1;
+
+option go_package = "github.com/MuhahaSam/golangPractice/pkg/note_v1";
+
+service NoteService {
+    rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse);
+    // rpc GetNote (GetNoteRequest) returns (GetNoteResponse);
+    // rpc Update (UpdateNoteRequest) returns (UpdateNoteResponse); 
+    // rpc DelteNote (DeleteNoteRequest) returns (DeleteNoteResponse);
+}
+
+message CreateNoteRequest {
+    string title = 1;
+    string text = 2;
+    string author = 3;
+}
+
+message CreateNoteResponse {
+    int64 index = 1;
+}
