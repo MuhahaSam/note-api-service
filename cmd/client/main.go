@@ -64,4 +64,22 @@ func main() {
 
 	log.Println("note after update: ", GetResAfterUpdate)
 
+	_, DeleteErr := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{
+		Index: GetRes.GetIndex(),
+	})
+
+	if DeleteErr != nil {
+		log.Println(DeleteErr.Error())
+	}
+
+	GetResDelete, GetResAfterDeleteErr := client.GetNote(context.Background(), &desc.GetNoteRequest{
+		Index: GetRes.GetIndex(),
+	})
+
+	if GetResAfterDeleteErr != nil {
+		log.Println(GetResAfterDeleteErr.Error())
+	}
+
+	log.Println("note after delete: ", GetResDelete)
+
 }

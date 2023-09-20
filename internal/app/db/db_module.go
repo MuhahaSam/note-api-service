@@ -42,12 +42,20 @@ func GetDbModuleInstance() *FakeDbModule {
 	return fakeDbModule
 }
 
-var fakeDb *map[string][]entity.NoteEntity = nil
+type FakeEntityContainer struct {
+	Index   int64
+	Records map[int64]entity.NoteEntity
+}
 
-func GetFakeDb() *map[string][]entity.NoteEntity {
+var fakeDb *map[string]FakeEntityContainer = nil
+
+func GetFakeDb() *map[string]FakeEntityContainer {
 	if fakeDb == nil {
-		fakeDb = &map[string][]entity.NoteEntity{
-			"Note": []entity.NoteEntity{},
+		fakeDb = &map[string]FakeEntityContainer{
+			"Note": FakeEntityContainer{
+				Index:   0,
+				Records: map[int64]entity.NoteEntity{},
+			},
 		}
 	}
 	return fakeDb
