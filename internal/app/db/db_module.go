@@ -24,7 +24,7 @@ func (db *FakeDbModule) Connect() error {
 	return nil
 }
 
-func (db *FakeDbModule) Close(config DbConfig) error {
+func (db *FakeDbModule) Close() error {
 	fmt.Println("close data base connection")
 	return nil
 }
