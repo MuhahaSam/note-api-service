@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type NoteServiceClient interface {
 	CreateNote(ctx context.Context, in *CreateNoteRequest, opts ...grpc.CallOption) (*CreateNoteResponse, error)
 	GetNote(ctx context.Context, in *GetNoteRequest, opts ...grpc.CallOption) (*GetNoteResponse, error)
-	Update(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
+	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
 	DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*DeleteNoteResponse, error)
 }
 
@@ -54,9 +54,9 @@ func (c *noteServiceClient) GetNote(ctx context.Context, in *GetNoteRequest, opt
 	return out, nil
 }
 
-func (c *noteServiceClient) Update(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error) {
+func (c *noteServiceClient) UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error) {
 	out := new(UpdateNoteResponse)
-	err := c.cc.Invoke(ctx, "/api.node_v1.NoteService/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.node_v1.NoteService/UpdateNote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func (c *noteServiceClient) DeleteNote(ctx context.Context, in *DeleteNoteReques
 type NoteServiceServer interface {
 	CreateNote(context.Context, *CreateNoteRequest) (*CreateNoteResponse, error)
 	GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error)
-	Update(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
+	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
 	DeleteNote(context.Context, *DeleteNoteRequest) (*DeleteNoteResponse, error)
 	mustEmbedUnimplementedNoteServiceServer()
 }
@@ -93,8 +93,8 @@ func (UnimplementedNoteServiceServer) CreateNote(context.Context, *CreateNoteReq
 func (UnimplementedNoteServiceServer) GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNote not implemented")
 }
-func (UnimplementedNoteServiceServer) Update(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedNoteServiceServer) UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNote not implemented")
 }
 func (UnimplementedNoteServiceServer) DeleteNote(context.Context, *DeleteNoteRequest) (*DeleteNoteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteNote not implemented")
@@ -148,20 +148,20 @@ func _NoteService_GetNote_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NoteService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _NoteService_UpdateNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateNoteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NoteServiceServer).Update(ctx, in)
+		return srv.(NoteServiceServer).UpdateNote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.node_v1.NoteService/Update",
+		FullMethod: "/api.node_v1.NoteService/UpdateNote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NoteServiceServer).Update(ctx, req.(*UpdateNoteRequest))
+		return srv.(NoteServiceServer).UpdateNote(ctx, req.(*UpdateNoteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -200,8 +200,8 @@ var NoteService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NoteService_GetNote_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _NoteService_Update_Handler,
+			MethodName: "UpdateNote",
+			Handler:    _NoteService_UpdateNote_Handler,
 		},
 		{
 			MethodName: "DeleteNote",

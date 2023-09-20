@@ -33,6 +33,19 @@ func (e *NoteRepository) Read(index int64) (entity.NoteEntity, error) {
 	return note, nil
 }
 
+func (e *NoteRepository) Update(index int64, updateBody *desc.UpdateNoteBody) error {
+	db := db.GetFakeDb()
+
+	(*db)["Note"][index] = entity.NoteEntity{
+		Index:  index,
+		Author: updateBody.GetAuthor(),
+		Title:  updateBody.GetTitle(),
+		Text:   updateBody.GetText(),
+	}
+
+	return nil
+}
+
 var noteRepository *NoteRepository = nil
 
 func GetNoteRepository() *NoteRepository {

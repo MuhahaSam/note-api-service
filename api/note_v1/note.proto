@@ -7,7 +7,7 @@ option go_package = "github.com/MuhahaSam/golangPractice/pkg/note_v1";
 service NoteService {
     rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse);
     rpc GetNote (GetNoteRequest) returns (GetNoteResponse);
-    rpc Update (UpdateNoteRequest) returns (UpdateNoteResponse); 
+    rpc UpdateNote (UpdateNoteRequest) returns (UpdateNoteResponse); 
     rpc DeleteNote (DeleteNoteRequest) returns (DeleteNoteResponse);
 }
 

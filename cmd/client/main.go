@@ -41,4 +41,27 @@ func main() {
 
 	log.Println("red note: ", GetRes)
 
+	_, UpdateErr := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
+		Index: GetRes.GetIndex(),
+		UpdateBody: &desc.UpdateNoteBody{
+			Author: "kim",
+			Title:  "Kim's story",
+			Text:   "This is my first crud on go",
+		},
+	})
+
+	if UpdateErr != nil {
+		log.Println(UpdateErr.Error())
+	}
+
+	GetResAfterUpdate, GetResAfterUpdateErr := client.GetNote(context.Background(), &desc.GetNoteRequest{
+		Index: GetRes.GetIndex(),
+	})
+
+	if GetResAfterUpdateErr != nil {
+		log.Println(GetResAfterUpdateErr.Error())
+	}
+
+	log.Println("note after update: ", GetResAfterUpdate)
+
 }
