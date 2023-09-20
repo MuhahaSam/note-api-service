@@ -2,6 +2,8 @@ package db
 
 import (
 	"fmt"
+
+	"github.com/MuhahaSam/golangPractice/internal/app/entity"
 )
 
 type DbModuleInterface interface {
@@ -40,12 +42,12 @@ func GetDbModuleInstance() *FakeDbModule {
 	return fakeDbModule
 }
 
-var fakeDb *map[string][]any = nil
+var fakeDb *map[string][]entity.NoteEntity = nil
 
-func GetFakeDb() *map[string][]any {
+func GetFakeDb() *map[string][]entity.NoteEntity {
 	if fakeDb == nil {
-		fakeDb = &map[string][]any{
-			"Note": []any{},
+		fakeDb = &map[string][]entity.NoteEntity{
+			"Note": []entity.NoteEntity{},
 		}
 	}
 	return fakeDb

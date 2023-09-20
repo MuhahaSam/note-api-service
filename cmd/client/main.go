@@ -19,16 +19,26 @@ func main() {
 	defer con.Close()
 
 	client := desc.NewNoteServiceClient(con)
-	res, err := client.CreateNote(context.Background(), &desc.CreateNoteRequest{
+	createRes, createErr := client.CreateNote(context.Background(), &desc.CreateNoteRequest{
 		Title:  "Wow",
 		Text:   "Note created",
 		Author: "Sam",
 	})
 
-	if err != nil {
-		log.Println(err.Error())
+	if createErr != nil {
+		log.Println(createErr.Error())
 	}
 
-	log.Println("note index: ", res.Index)
+	log.Println("note index: ", createRes.Index)
+
+	GetRes, GetErr := client.GetNote(context.Background(), &desc.GetNoteRequest{
+		Index: createRes.Index,
+	})
+
+	if GetErr != nil {
+		log.Println(GetErr.Error())
+	}
+
+	log.Println("red note: ", GetRes)
 
 }

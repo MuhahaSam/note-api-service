@@ -25,6 +25,14 @@ func (r *NoteRepository) Create(createNote *desc.CreateNoteRequest) (int64, erro
 	return index, nil
 }
 
+func (e *NoteRepository) Read(index int64) (entity.NoteEntity, error) {
+	db := db.GetFakeDb()
+
+	note := (*db)["Note"][index]
+
+	return note, nil
+}
+
 var noteRepository *NoteRepository = nil
 
 func GetNoteRepository() *NoteRepository {
