@@ -3,6 +3,8 @@ package db
 import (
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"github.com/MuhahaSam/golangPractice/internal/app/entity"
 )
 
@@ -16,12 +18,7 @@ type FakeDbModule struct {
 	DbModuleInterface
 }
 
-func (db *FakeDbModule) CreateConnection(config DbConfig) error {
-	fmt.Println("data base connection created")
-	return nil
-}
-
-func (db *FakeDbModule) Connect() error {
+func (db *FakeDbModule) Connect(config *DbConfig) error {
 	fmt.Println("connect to data base")
 	return nil
 }
@@ -36,27 +33,17 @@ var fakeDbModule *FakeDbModule = nil
 func GetDbModuleInstance() *FakeDbModule {
 	if fakeDbModule == nil {
 		fakeDbModule = new(FakeDbModule)
-		fakeDbModule.CreateConnection(fakeDbConfig)
 	}
 
 	return fakeDbModule
 }
 
-type FakeEntityContainer struct {
-	Index   int64
-	Records map[int64]entity.NoteEntity
-}
+var fakeDb map[string]map[uuid.UUID]entity.NoteEntity = nil
 
-var fakeDb *map[string]FakeEntityContainer = nil
-
-func GetFakeDb() *map[string]FakeEntityContainer {
+func GetFakeDb() *map[string]map[uuid.UUID]entity.NoteEntity {
 	if fakeDb == nil {
-		fakeDb = &map[string]FakeEntityContainer{
-			"Note": FakeEntityContainer{
-				Index:   0,
-				Records: map[int64]entity.NoteEntity{},
-			},
-		}
+		fakeDb = make(map[string]map[uuid.UUID]entity.NoteEntity)
+		fakeDb["Note"] = make(map[uuid.UUID]entity.NoteEntity)
 	}
-	return fakeDb
+	return &fakeDb
 }

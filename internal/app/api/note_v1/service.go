@@ -1,6 +1,7 @@
 package note_v1
 
 import (
+	db "github.com/MuhahaSam/golangPractice/internal/app/db"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 )
 
@@ -8,7 +9,14 @@ type Note struct {
 	desc.NoteServiceServer
 }
 
-func NewNote() *Note {
+func (n *Note) Constructor() {
+	db.GetDbModuleInstance().Connect(db.GetFakeConfig())
+}
 
+func (n *Note) Destructor() {
+	db.GetDbModuleInstance().Close()
+}
+
+func NewNote() *Note {
 	return &Note{}
 }

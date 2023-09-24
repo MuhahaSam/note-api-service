@@ -20,9 +20,13 @@ func main() {
 	}
 
 	server := grpc.NewServer()
-	desc.RegisterNoteServiceServer(server, note_v1.NewNote())
+	note := note_v1.NewNote()
+	note.Constructor()
+	desc.RegisterNoteServiceServer(server, note)
 
 	fmt.Printf("server is running on port: %s \n", port)
+
+	defer note.Destructor()
 
 	if err = server.Serve(list); err != nil {
 		log.Fatalf("failed serve: %s ", err.Error())

@@ -4,20 +4,18 @@ import (
 	"context"
 	"log"
 
-	"github.com/MuhahaSam/golangPractice/internal/app/db"
 	"github.com/MuhahaSam/golangPractice/internal/app/repository"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
+	"github.com/google/uuid"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*desc.UpdateNoteResponse, error) {
-	db.GetDbModuleInstance().Connect()
-	err := repository.GetNoteRepository().Update(req.GetIndex(), req.GetUpdateBody())
+func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*emptypb.Empty, error) {
+	err := repository.GetNoteRepository().Update(uuid.UUID(req.GetUuid().Value), req.GetUpdateBody())
 	if err != nil {
 		log.Fatalf("error while update note: %s", err.Error())
 	}
 
-	defer db.GetDbModuleInstance().Close()
-
-	return &desc.UpdateNoteResponse{}, nil
+	return new(emptypb.Empty), nil
 
 }

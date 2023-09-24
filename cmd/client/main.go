@@ -6,6 +6,7 @@ import (
 
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const address = "localhost:50051"
@@ -13,73 +14,63 @@ const address = "localhost:50051"
 func main() {
 	con, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("didn't connect to server: %s", err.Error())
+		log.Fatalf("dIdn't connect to server: %s", err.Error())
 
 	}
 	defer con.Close()
+	contextBackground := context.Background()
 
 	client := desc.NewNoteServiceClient(con)
-	createRes, createErr := client.CreateNote(context.Background(), &desc.CreateNoteRequest{
+
+	var createResponse *desc.CreateNoteResponse
+	var getResponse *desc.GetNoteResponse
+	var resErr error
+
+	createResponse, resErr = client.CreateNote(contextBackground, &desc.CreateNoteRequest{
 		Title:  "Wow",
 		Text:   "Note created",
 		Author: "Sam",
 	})
 
-	if createErr != nil {
-		log.Println(createErr.Error())
-	}
+	uuid := &desc.UUID{Value: createResponse.Uuid.Value}
 
-	log.Println("note index: ", createRes.Index)
+	log.Println("note Id: ", createResponse.Uuid)
 
-	GetRes, GetErr := client.GetNote(context.Background(), &desc.GetNoteRequest{
-		Index: createRes.Index,
+	getResponse, resErr = client.GetNote(contextBackground, &desc.GetNoteRequest{
+		Uuid: uuid,
 	})
 
-	if GetErr != nil {
-		log.Println(GetErr.Error())
-	}
+	log.Println("read note: ", getResponse)
 
-	log.Println("red note: ", GetRes)
+	type StringValue = wrapperspb.StringValue
 
-	_, UpdateErr := client.UpdateNote(context.Background(), &desc.UpdateNoteRequest{
-		Index: GetRes.GetIndex(),
+	_, resErr = client.UpdateNote(contextBackground, &desc.UpdateNoteRequest{
+		Uuid: uuid,
 		UpdateBody: &desc.UpdateNoteBody{
-			Author: "kim",
-			Title:  "Kim's story",
-			Text:   "This is my first crud on go",
+			Author: &StringValue{Value: "kim"},
+			Title:  &StringValue{Value: "Kim's story"},
+			Text:   &StringValue{Value: "This is my first crud on go"},
 		},
 	})
 
-	if UpdateErr != nil {
-		log.Println(UpdateErr.Error())
-	}
-
-	GetResAfterUpdate, GetResAfterUpdateErr := client.GetNote(context.Background(), &desc.GetNoteRequest{
-		Index: GetRes.GetIndex(),
+	getResponse, _ = client.GetNote(contextBackground, &desc.GetNoteRequest{
+		Uuid: uuid,
 	})
 
-	if GetResAfterUpdateErr != nil {
-		log.Println(GetResAfterUpdateErr.Error())
-	}
+	log.Println("read note after update: ", getResponse)
 
-	log.Println("note after update: ", GetResAfterUpdate)
-
-	_, DeleteErr := client.DeleteNote(context.Background(), &desc.DeleteNoteRequest{
-		Index: GetRes.GetIndex(),
+	_, resErr = client.DeleteNote(contextBackground, &desc.DeleteNoteRequest{
+		Uuid: uuid,
 	})
 
-	if DeleteErr != nil {
-		log.Println(DeleteErr.Error())
-	}
-
-	GetResDelete, GetResAfterDeleteErr := client.GetNote(context.Background(), &desc.GetNoteRequest{
-		Index: GetRes.GetIndex(),
+	getResponse, _ = client.GetNote(contextBackground, &desc.GetNoteRequest{
+		Uuid: uuid,
 	})
 
-	if GetResAfterDeleteErr != nil {
-		log.Println(GetResAfterDeleteErr.Error())
-	}
+	log.Println("read note after delete: ", getResponse)
 
-	log.Println("note after delete: ", GetResDelete)
+	if resErr != nil {
+		log.Println(resErr.Error())
+	}
 
 }

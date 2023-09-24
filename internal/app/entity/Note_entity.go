@@ -1,7 +1,9 @@
 package entity
 
+import "github.com/google/uuid"
+
 type NoteEntity struct {
-	Index  int64
+	Id     uuid.UUID
 	Author string
 	Title  string
 	Text   string

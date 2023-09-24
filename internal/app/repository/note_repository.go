@@ -3,60 +3,55 @@ package repository
 import (
 	"github.com/MuhahaSam/golangPractice/internal/app/db"
 	"github.com/MuhahaSam/golangPractice/internal/app/entity"
-
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
+	"github.com/google/uuid"
 )
 
 type NoteRepository struct {
 	Repository
 }
 
-func (r *NoteRepository) Create(createNote *desc.CreateNoteRequest) (int64, error) {
+func (r *NoteRepository) Create(createNote *desc.CreateNoteRequest) (uuid.UUID, error) {
 	db := db.GetFakeDb()
-	noteContainer := (*db)["Note"]
 
-	index := noteContainer.Index
-	noteContainer.Records[index] = entity.NoteEntity{
-		Index:  index,
+	uuid := uuid.New()
+	(*db)["Note"][uuid] = entity.NoteEntity{
+		Id:     uuid,
 		Title:  createNote.GetTitle(),
 		Author: createNote.GetAuthor(),
 		Text:   createNote.GetText(),
 	}
 
-	noteContainer.Index++
-
-	(*db)["Note"] = noteContainer
-
-	return index, nil
+	return uuid, nil
 }
 
-func (r *NoteRepository) Read(index int64) (entity.NoteEntity, error) {
+func (r *NoteRepository) Read(Id uuid.UUID) (entity.NoteEntity, error) {
 	db := db.GetFakeDb()
 
-	note := (*db)["Note"].Records[index]
+	note := (*db)["Note"][Id]
 
 	return note, nil
 }
 
-func (e *NoteRepository) Update(index int64, updateBody *desc.UpdateNoteBody) error {
+func (e *NoteRepository) Update(Id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
 	db := db.GetFakeDb()
 
-	(*db)["Note"].Records[index] = entity.NoteEntity{
-		Index:  index,
-		Author: updateBody.GetAuthor(),
-		Title:  updateBody.GetTitle(),
-		Text:   updateBody.GetText(),
+	(*db)["Note"][Id] = entity.NoteEntity{
+		Id:     Id,
+		Author: updateBody.GetAuthor().GetValue(),
+		Title:  updateBody.GetTitle().GetValue(),
+		Text:   updateBody.GetText().GetValue(),
 	}
 
 	return nil
 }
 
-func (r *NoteRepository) Delete(index int64) error {
+func (r *NoteRepository) Delete(Id uuid.UUID) error {
 	db := db.GetFakeDb()
 
 	noteContainer := (*db)["Note"]
 
-	delete(noteContainer.Records, index)
+	delete((*db)["Note"], Id)
 
 	(*db)["Note"] = noteContainer
 

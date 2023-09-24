@@ -4,20 +4,18 @@ import (
 	"context"
 	"log"
 
-	"github.com/MuhahaSam/golangPractice/internal/app/db"
 	"github.com/MuhahaSam/golangPractice/internal/app/repository"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
+	"github.com/google/uuid"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*desc.DeleteNoteResponse, error) {
-	db.GetDbModuleInstance().Connect()
-	err := repository.GetNoteRepository().Delete(req.Index)
+func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*emptypb.Empty, error) {
+	err := repository.GetNoteRepository().Delete(uuid.UUID(req.Uuid.Value))
 	if err != nil {
 		log.Fatalf("error while reading note: %s", err.Error())
 	}
 
-	defer db.GetDbModuleInstance().Close()
-
-	return &desc.DeleteNoteResponse{}, nil
+	return new(emptypb.Empty), nil
 
 }
