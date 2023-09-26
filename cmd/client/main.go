@@ -13,64 +13,54 @@ const address = "localhost:50051"
 
 func main() {
 	con, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("dIdn't connect to server: %s", err.Error())
+	if err != nil {log.Fatalf("dIdn't connect to server: %s", err.Error())}
 
-	}
 	defer con.Close()
-	contextBackground := context.Background()
+	ctx := context.Background()
 
 	client := desc.NewNoteServiceClient(con)
 
-	var createResponse *desc.CreateNoteResponse
-	var getResponse *desc.GetNoteResponse
-	var resErr error
+	var createRes *desc.CreateNoteResponse
+	var getRes *desc.GetNoteResponse
 
-	createResponse, resErr = client.CreateNote(contextBackground, &desc.CreateNoteRequest{
+	createRes, err = client.CreateNote(ctx, &desc.CreateNoteRequest{
 		Title:  "Wow",
 		Text:   "Note created",
 		Author: "Sam",
 	})
 
-	uuid := &desc.UUID{Value: createResponse.Uuid.Value}
+	uuid := &desc.UUID{Value: createRes.Uuid.Value}
 
-	log.Println("note Id: ", createResponse.Uuid)
+	log.Println("note Id: ", createRes.Uuid)
 
-	getResponse, resErr = client.GetNote(contextBackground, &desc.GetNoteRequest{
+	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
 		Uuid: uuid,
 	})
 
-	log.Println("read note: ", getResponse)
+	log.Println("read note: ", getRes)
 
-	type StringValue = wrapperspb.StringValue
-
-	_, resErr = client.UpdateNote(contextBackground, &desc.UpdateNoteRequest{
+	_, err = client.UpdateNote(ctx, &desc.UpdateNoteRequest{
 		Uuid: uuid,
 		UpdateBody: &desc.UpdateNoteBody{
-			Author: &StringValue{Value: "kim"},
-			Title:  &StringValue{Value: "Kim's story"},
-			Text:   &StringValue{Value: "This is my first crud on go"},
+			Author: &wrapperspb.StringValue{Value: "kim"},
+			Title:  &wrapperspb.StringValue{Value: "Kim's story"},
+			Text:   &wrapperspb.StringValue{Value: "This is my first crud on go"},
 		},
 	})
 
-	getResponse, _ = client.GetNote(contextBackground, &desc.GetNoteRequest{
+	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
 		Uuid: uuid,
 	})
 
-	log.Println("read note after update: ", getResponse)
+	log.Println("read note after update: ", getRes)
 
-	_, resErr = client.DeleteNote(contextBackground, &desc.DeleteNoteRequest{
+	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{Uuid: uuid})
+
+	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
 		Uuid: uuid,
 	})
 
-	getResponse, _ = client.GetNote(contextBackground, &desc.GetNoteRequest{
-		Uuid: uuid,
-	})
+	log.Println("read note after delete: ", getRes)
 
-	log.Println("read note after delete: ", getResponse)
-
-	if resErr != nil {
-		log.Println(resErr.Error())
-	}
-
+	if err != nil {log.Println(err.Error())}
 }

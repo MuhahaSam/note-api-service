@@ -15,45 +15,40 @@ func (r *NoteRepository) Create(createNote *desc.CreateNoteRequest) (uuid.UUID, 
 	db := db.GetFakeDb()
 
 	uuid := uuid.New()
-	(*db)["Note"][uuid] = entity.NoteEntity{
+
+	db.Write(uuid, entity.NoteEntity{
 		Id:     uuid,
 		Title:  createNote.GetTitle(),
 		Author: createNote.GetAuthor(),
 		Text:   createNote.GetText(),
-	}
+	})
 
 	return uuid, nil
 }
 
-func (r *NoteRepository) Read(Id uuid.UUID) (entity.NoteEntity, error) {
+func (r *NoteRepository) Read(id uuid.UUID) (entity.NoteEntity, error) {
 	db := db.GetFakeDb()
-
-	note := (*db)["Note"][Id]
-
+	note := db.Read(id)
 	return note, nil
 }
 
-func (e *NoteRepository) Update(Id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
+func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
 	db := db.GetFakeDb()
 
-	(*db)["Note"][Id] = entity.NoteEntity{
-		Id:     Id,
+	db.Write(id, entity.NoteEntity{
+		Id:     id,
 		Author: updateBody.GetAuthor().GetValue(),
 		Title:  updateBody.GetTitle().GetValue(),
 		Text:   updateBody.GetText().GetValue(),
-	}
+	})
 
 	return nil
 }
 
-func (r *NoteRepository) Delete(Id uuid.UUID) error {
+func (r *NoteRepository) Delete(id uuid.UUID) error {
 	db := db.GetFakeDb()
 
-	noteContainer := (*db)["Note"]
-
-	delete((*db)["Note"], Id)
-
-	(*db)["Note"] = noteContainer
+	db.Delete(id)
 
 	return nil
 }

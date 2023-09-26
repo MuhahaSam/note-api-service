@@ -10,7 +10,7 @@ type Note struct {
 }
 
 func (n *Note) Constructor() {
-	db.GetDbModuleInstance().Connect(db.GetFakeConfig())
+	db.GetDbModuleInstance().Connect("postgresql://localhost/some_db?user=user&password=passwd")
 }
 
 func (n *Note) Destructor() {

@@ -12,10 +12,7 @@ import (
 
 func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*emptypb.Empty, error) {
 	err := repository.GetNoteRepository().Update(uuid.UUID(req.GetUuid().Value), req.GetUpdateBody())
-	if err != nil {
-		log.Fatalf("error while update note: %s", err.Error())
-	}
+	if err != nil {log.Fatalf("error while update note: %s", err.Error())}
 
 	return new(emptypb.Empty), nil
-
 }
