@@ -13,9 +13,7 @@ type NoteRepository struct {
 
 func (r *NoteRepository) Create(createNote *desc.CreateNoteRequest) (uuid.UUID, error) {
 	db := db.GetFakeDb()
-
 	uuid := uuid.New()
-
 	db.Write(uuid, entity.NoteEntity{
 		Id:     uuid,
 		Title:  createNote.GetTitle(),
@@ -47,9 +45,7 @@ func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) e
 
 func (r *NoteRepository) Delete(id uuid.UUID) error {
 	db := db.GetFakeDb()
-
 	db.Delete(id)
-
 	return nil
 }
 

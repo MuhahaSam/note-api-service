@@ -10,7 +10,10 @@ import (
 
 func (n *Note) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
 	id, err := repository.GetNoteRepository().Create(req)
-	if err != nil {log.Fatalf("error while creating note: %s", err.Error())}
+	if err != nil {
+		log.Printf("error while creating note: %s", err.Error())
+		return nil, err
+	}
 
 	return &desc.CreateNoteResponse{
 		Uuid: &desc.UUID{Value: id[:]},

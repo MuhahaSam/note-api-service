@@ -13,11 +13,12 @@ const address = "localhost:50051"
 
 func main() {
 	con, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {log.Fatalf("dIdn't connect to server: %s", err.Error())}
+	if err != nil {
+		log.Fatalf("dIdn't connect to server: %s", err.Error())
+	}
 
 	defer con.Close()
 	ctx := context.Background()
-
 	client := desc.NewNoteServiceClient(con)
 
 	var createRes *desc.CreateNoteResponse
@@ -55,12 +56,12 @@ func main() {
 	log.Println("read note after update: ", getRes)
 
 	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{Uuid: uuid})
-
 	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
 		Uuid: uuid,
 	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 
 	log.Println("read note after delete: ", getRes)
-
-	if err != nil {log.Println(err.Error())}
 }

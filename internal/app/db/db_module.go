@@ -40,26 +40,26 @@ func GetDbModuleInstance() *FakeDbModule {
 }
 
 type FakeDb struct {
-	mu      sync.Mutex
+	mu      sync.RWMutex
 	records map[string]map[uuid.UUID]entity.NoteEntity
 }
 
 func (f *FakeDb) Read(uuid uuid.UUID) entity.NoteEntity {
-	f.mu.Lock()
+	f.mu.RLock()
 	defer f.mu.Unlock()
 	return f.records["Note"][uuid]
 }
 
 func (f *FakeDb) Write(uuid uuid.UUID, note entity.NoteEntity) {
 	f.mu.Lock()
-	f.records["Note"][uuid] = note
 	defer f.mu.Unlock()
+	f.records["Note"][uuid] = note
 }
 
 func (f *FakeDb) Delete(uuid uuid.UUID) {
 	f.mu.Lock()
-	delete(f.records["Note"], uuid)
 	defer f.mu.Unlock()
+	delete(f.records["Note"], uuid)
 }
 
 var fakeDb = FakeDb{

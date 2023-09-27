@@ -9,8 +9,9 @@ type Note struct {
 	desc.NoteServiceServer
 }
 
-func (n *Note) Constructor() {
+func (n *Note) New() *Note {
 	db.GetDbModuleInstance().Connect("postgresql://localhost/some_db?user=user&password=passwd")
+	return n
 }
 
 func (n *Note) Destructor() {

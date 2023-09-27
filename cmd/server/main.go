@@ -14,17 +14,18 @@ const port = ":50051"
 
 func main() {
 	list, err := net.Listen("tcp", port)
-
-	if err != nil {log.Fatalf("failed mapping port: %s ", err.Error())}
+	if err != nil {
+		log.Fatalf("failed mapping port: %s ", err.Error())
+	}
 
 	server := grpc.NewServer()
-	note := note_v1.NewNote()
-	note.Constructor()
+	note := note_v1.NewNote().New()
 	desc.RegisterNoteServiceServer(server, note)
 
 	fmt.Printf("server is running on port: %s \n", port)
 
 	defer note.Destructor()
-
-	if err = server.Serve(list); err != nil {log.Fatalf("failed serve: %s ", err.Error())}
+	if err = server.Serve(list); err != nil {
+		log.Fatalf("failed serve: %s ", err.Error())
+	}
 }
