@@ -8,3 +8,14 @@ generate:
 
 server_start: go run .\cmd\server\main.go
 client_start: go run .\cmd\client\main.go
+
+LOCAL_MIGRATION_DIR = './migration'
+LOCAL_MIGRATION_DNS = 'host=localhost port=5433 dbname=note user=postgres password=postgres'
+
+.PHONY: local-migration-up
+local-migration-up:
+	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DNS} up -v
+
+.PHONY: local-migration-down
+local-migration-down:
+	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DNS} down -v
