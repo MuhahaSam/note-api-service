@@ -2,73 +2,47 @@ package db
 
 import (
 	"fmt"
-	"sync"
+	"log"
 
-	"github.com/google/uuid"
-
-	"github.com/MuhahaSam/golangPractice/internal/app/entity"
+	"github.com/MuhahaSam/golangPractice/config"
+	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 )
 
 type DbModuleInterface interface {
 	CreateConnection(dsn string) error
-	Connect() error
-	Close() error
+	Open()
+	Close()
+	GetDb()
 }
 
-type FakeDbModule struct {
+type DbModule struct {
 	DbModuleInterface
+	DbConnection *sqlx.DB
 }
 
-func (db *FakeDbModule) Connect(dsn string) error {
-	fmt.Println("connect to data base")
-	return nil
-}
+func (d *DbModule) Open(dbConfig *config.DbConfig) {
+	dbDns := fmt.Sprintf("host=%s port=%d dbname=%s user=%s password=%s",
+		dbConfig.Host, dbConfig.Port, dbConfig.DbName, dbConfig.User, dbConfig.Password)
 
-func (db *FakeDbModule) Close() error {
-	fmt.Println("close data base connection")
-	return nil
-}
-
-var fakeDbModule *FakeDbModule = nil
-
-func GetDbModuleInstance() *FakeDbModule {
-	if fakeDbModule == nil {
-		fakeDbModule = new(FakeDbModule)
+	db, err := sqlx.Open(dbConfig.Engine, dbDns)
+	if err != nil {
+		log.Fatalf("error during connection to data base: %s", err)
 	}
 
-	return fakeDbModule
+	d.DbConnection = db
 }
 
-type FakeDb struct {
-	mu      sync.RWMutex
-	records map[string]map[uuid.UUID]entity.NoteEntity
+func (d *DbModule) Close() {
+	defer d.DbConnection.Close()
 }
 
-func (f *FakeDb) Read(uuid uuid.UUID) entity.NoteEntity {
-	f.mu.RLock()
-	defer f.mu.Unlock()
-	return f.records["Note"][uuid]
+func (d *DbModule) GetDbConnection() *sqlx.DB {
+	return d.DbConnection
 }
 
-func (f *FakeDb) Write(uuid uuid.UUID, note entity.NoteEntity) {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	f.records["Note"][uuid] = note
-}
+var dbModule *DbModule = &DbModule{}
 
-func (f *FakeDb) Delete(uuid uuid.UUID) {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	delete(f.records["Note"], uuid)
-}
-
-var fakeDb = FakeDb{
-	records: make(map[string]map[uuid.UUID]entity.NoteEntity),
-}
-
-func GetFakeDb() *FakeDb {
-	if fakeDb.records["Note"] == nil {
-		fakeDb.records["Note"] = make(map[uuid.UUID]entity.NoteEntity)
-	}
-	return &fakeDb
+func GetDbModuleInstance() *DbModule {
+	return dbModule
 }

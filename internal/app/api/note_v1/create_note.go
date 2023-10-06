@@ -9,7 +9,7 @@ import (
 )
 
 func (n *Note) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
-	id, err := repository.GetNoteRepository().Create(req)
+	id, err := repository.GetNoteRepository().Create(ctx, req)
 	if err != nil {
 		log.Printf("error while creating note: %s", err.Error())
 		return nil, err

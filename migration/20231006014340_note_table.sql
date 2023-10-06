@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 create table note (
-    id bigserial primary key,
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     title text,
     author text not null,
     text text,

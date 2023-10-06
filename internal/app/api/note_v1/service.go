@@ -1,6 +1,7 @@
 package note_v1
 
 import (
+	"github.com/MuhahaSam/golangPractice/config"
 	db "github.com/MuhahaSam/golangPractice/internal/app/db"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 )
@@ -10,7 +11,8 @@ type Note struct {
 }
 
 func (n *Note) New() *Note {
-	db.GetDbModuleInstance().Connect("postgresql://localhost/some_db?user=user&password=passwd")
+
+	db.GetDbModuleInstance().Open(&config.GetConfig().DbConfig)
 	return n
 }
 
