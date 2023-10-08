@@ -5,6 +5,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/MuhahaSam/golangPractice/internal/app/db"
+	"github.com/MuhahaSam/golangPractice/internal/app/entity"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 	"github.com/google/uuid"
 )
@@ -14,46 +15,42 @@ type NoteRepository struct {
 }
 
 func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateNoteRequest) (*uuid.UUID, error) {
-	builder := sq.Insert("note").
+	query, args, err := sq.Insert("note").
 		PlaceholderFormat(sq.Dollar).
 		Columns("author, title, text").
 		Values(createNote.GetAuthor(), createNote.GetTitle(), createNote.GetText()).
-		Suffix("returning id")
+		Suffix("returning id").
+		ToSql()
 
-	query, args, err := builder.ToSql()
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := db.
-		GetDbModuleInstance().
-		GetDbConnection().
-		QueryContext(ctx, query, args...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var id string
-	rows.Next()
-	err = rows.Scan(&id)
+	id, err := db.RunQueryToCreate[uuid.UUID](ctx, query, args)
 	if err != nil {
 		return nil, err
 	}
 
-	note_uuid, err := uuid.Parse(id)
-	if err != nil {
-		return nil, err
-	}
-
-	return &note_uuid, nil
+	return id, nil
 }
 
-// func (r *NoteRepository) Read(id uuid.UUID) (entity.NoteEntity, error) {
-// 	db := db.GetFakeDb()
-// 	note := db.Read(id)
-// 	return note, nil
-// }
+func (r *NoteRepository) Read(ctx context.Context, uuid uuid.UUID) (*entity.NoteEntity, error) {
+	query, args, err := sq.Select("id, author, title, text").
+		From("note").
+		Where("id = $1", uuid).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	note := &entity.NoteEntity{}
+	err = db.RunQueryToGetFirst(note, query, args)
+	if err != nil {
+		return nil, err
+	}
+
+	return note, nil
+}
 
 // func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
 // 	db := db.GetFakeDb()

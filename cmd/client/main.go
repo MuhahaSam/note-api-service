@@ -21,7 +21,6 @@ func main() {
 	client := desc.NewNoteServiceClient(con)
 
 	var createRes *desc.CreateNoteResponse
-	// var getRes *desc.GetNoteResponse
 
 	createRes, err = client.CreateNote(ctx, &desc.CreateNoteRequest{
 		Title:  "Wow",
@@ -29,15 +28,15 @@ func main() {
 		Author: "Sam",
 	})
 
-	// uuid := &desc.UUID{Value: createRes.Uuid.Value}
+	uuid := &desc.UUID{Value: createRes.Uuid.Value}
 
 	log.Println("note Id: ", createRes.Uuid)
 
-	// getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
-	// 	Uuid: uuid,
-	// })
+	getRes, err := client.GetNote(ctx, &desc.GetNoteRequest{
+		Uuid: uuid,
+	})
 
-	// log.Println("read note: ", getRes)
+	log.Println("read note: ", getRes)
 
 	// _, err = client.UpdateNote(ctx, &desc.UpdateNoteRequest{
 	// 	Uuid: uuid,

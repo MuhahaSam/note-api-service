@@ -11,13 +11,12 @@ type Note struct {
 }
 
 func (n *Note) New() *Note {
-
-	db.GetDbModuleInstance().Open(&config.GetConfig().DbConfig)
+	db.GetDbModule().Open(&config.GetConfig().DbConfig)
 	return n
 }
 
 func (n *Note) Destructor() {
-	db.GetDbModuleInstance().Close()
+	db.GetDbModule().Close()
 }
 
 func NewNote() *Note {
