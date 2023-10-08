@@ -54,13 +54,13 @@ func main() {
 
 	log.Println("read note after update: ", getRes)
 
-	// _, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{Uuid: uuid})
-	// getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
-	// 	Uuid: uuid,
-	// })
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// }
+	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{Uuid: uuid})
+	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
+		Uuid: uuid,
+	})
+	if err != nil {
+		log.Println(err.Error())
+	}
 
-	// log.Println("read note after delete: ", getRes)
+	log.Println("read note after delete: ", getRes)
 }

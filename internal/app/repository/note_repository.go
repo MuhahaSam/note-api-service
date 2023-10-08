@@ -21,7 +21,6 @@ func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateNote
 		Values(createNote.GetAuthor(), createNote.GetTitle(), createNote.GetText()).
 		Suffix("returning id").
 		ToSql()
-
 	if err != nil {
 		return nil, err
 	}
@@ -72,11 +71,23 @@ func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) e
 	return nil
 }
 
-// func (r *NoteRepository) Delete(id uuid.UUID) error {
-// 	db := db.GetFakeDb()
-// 	db.Delete(id)
-// 	return nil
-// }
+func (r *NoteRepository) Delete(id uuid.UUID) error {
+	query, args, err := sq.Delete("note").
+		Where(sq.Eq{"id": id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	err = db.RunQuery(query, args)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
 
 var noteRepository *NoteRepository = nil
 
