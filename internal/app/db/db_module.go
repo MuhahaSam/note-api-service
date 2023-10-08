@@ -82,3 +82,13 @@ func RunQueryToGetFirst[T entity.Entity](object *T, query string, args []any) er
 
 	return nil
 }
+
+func RunQuery(query string, args []any) error {
+	rows, err := dbModule.DbConnection.Queryx(query, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	return nil
+}

@@ -52,18 +52,25 @@ func (r *NoteRepository) Read(ctx context.Context, uuid uuid.UUID) (*entity.Note
 	return note, nil
 }
 
-// func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
-// 	db := db.GetFakeDb()
+func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
+	query, args, err := sq.Update("note").
+		Set("author", updateBody.GetAuthor().Value).
+		Set("title", updateBody.GetTitle().Value).
+		Set("text", updateBody.GetText().Value).
+		Where(sq.Eq{"id": id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
 
-// 	db.Write(id, entity.NoteEntity{
-// 		Id:     id,
-// 		Author: updateBody.GetAuthor().GetValue(),
-// 		Title:  updateBody.GetTitle().GetValue(),
-// 		Text:   updateBody.GetText().GetValue(),
-// 	})
+	err = db.RunQuery(query, args)
+	if err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
 // func (r *NoteRepository) Delete(id uuid.UUID) error {
 // 	db := db.GetFakeDb()

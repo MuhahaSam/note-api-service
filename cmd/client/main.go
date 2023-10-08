@@ -6,6 +6,7 @@ import (
 
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const address = "localhost:50051"
@@ -38,20 +39,20 @@ func main() {
 
 	log.Println("read note: ", getRes)
 
-	// _, err = client.UpdateNote(ctx, &desc.UpdateNoteRequest{
-	// 	Uuid: uuid,
-	// 	UpdateBody: &desc.UpdateNoteBody{
-	// 		Author: &wrapperspb.StringValue{Value: "kim"},
-	// 		Title:  &wrapperspb.StringValue{Value: "Kim's story"},
-	// 		Text:   &wrapperspb.StringValue{Value: "This is my first crud on go"},
-	// 	},
-	// })
+	_, err = client.UpdateNote(ctx, &desc.UpdateNoteRequest{
+		Uuid: uuid,
+		UpdateBody: &desc.UpdateNoteBody{
+			Author: &wrapperspb.StringValue{Value: "kim"},
+			Title:  &wrapperspb.StringValue{Value: "Kim's story"},
+			Text:   &wrapperspb.StringValue{Value: "This is my first crud on go"},
+		},
+	})
 
-	// getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
-	// 	Uuid: uuid,
-	// })
+	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
+		Uuid: uuid,
+	})
 
-	// log.Println("read note after update: ", getRes)
+	log.Println("read note after update: ", getRes)
 
 	// _, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{Uuid: uuid})
 	// getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
