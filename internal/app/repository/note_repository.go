@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/MuhahaSam/golangPractice/internal/app/db"
@@ -25,25 +26,40 @@ func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateNote
 		return nil, err
 	}
 
-	id, err := db.RunQueryToCreate[uuid.UUID](ctx, query, args)
+	rows, err := db.GetDbModule().DbConnection.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var id uuid.UUID
+	rows.Next()
+	err = rows.Scan(&id)
 	if err != nil {
 		return nil, err
 	}
 
-	return id, nil
+	return &id, nil
 }
 
 func (r *NoteRepository) Read(ctx context.Context, uuid uuid.UUID) (*entity.NoteEntity, error) {
 	query, args, err := sq.Select("id, author, title, text").
 		From("note").
-		Where("id = $1", uuid).
+		Where("id = $1 and deleted_at is null", uuid).
 		ToSql()
 	if err != nil {
 		return nil, err
 	}
 
+	rows, err := db.GetDbModule().DbConnection.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
 	note := &entity.NoteEntity{}
-	err = db.RunQueryToGetFirst(note, query, args)
+	rows.Next()
+	err = rows.Scan(&note.Id, &note.Author, &note.Title, &note.Text)
 	if err != nil {
 		return nil, err
 	}
@@ -56,6 +72,7 @@ func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) e
 		Set("author", updateBody.GetAuthor().Value).
 		Set("title", updateBody.GetTitle().Value).
 		Set("text", updateBody.GetText().Value).
+		Set("updated_at", time.Now()).
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
@@ -63,16 +80,18 @@ func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) e
 		return err
 	}
 
-	err = db.RunQuery(query, args)
+	rows, err := db.GetDbModule().DbConnection.Queryx(query, args...)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	return nil
 }
 
 func (r *NoteRepository) Delete(id uuid.UUID) error {
-	query, args, err := sq.Delete("note").
+	query, args, err := sq.Update("note").
+		Set("deleted_at", time.Now()).
 		Where(sq.Eq{"id": id}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
@@ -80,13 +99,13 @@ func (r *NoteRepository) Delete(id uuid.UUID) error {
 		return err
 	}
 
-	err = db.RunQuery(query, args)
+	rows, err := db.GetDbModule().DbConnection.Queryx(query, args...)
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	return nil
-
 }
 
 var noteRepository *NoteRepository = nil

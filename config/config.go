@@ -1,18 +1,13 @@
 package config
 
 import (
-	"log"
+	"fmt"
 	"os"
-	"strconv"
 )
 
 type DbConfig struct {
-	Engine   string
-	Host     string
-	Port     int
-	DbName   string
-	User     string
-	Password string
+	Engine string
+	Dsn    string
 }
 
 type Config struct {
@@ -26,19 +21,16 @@ func GetConfig() *Config {
 		return config
 	}
 
-	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-	if err != nil {
-		log.Fatalf("db port is not number: %s", err)
-	}
-
 	config = &Config{
 		DbConfig: DbConfig{
-			Engine:   os.Getenv("DB_ENGINE"),
-			Host:     os.Getenv("DB_HOST"),
-			Port:     port,
-			DbName:   os.Getenv("DB_NAME"),
-			User:     os.Getenv("DB_USER"),
-			Password: os.Getenv("DB_PASSWORD"),
+			Engine: os.Getenv("DB_ENGINE"),
+			Dsn: fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s",
+				os.Getenv("DB_HOST"),
+				os.Getenv("DB_PORT"),
+				os.Getenv("DB_NAME"),
+				os.Getenv("DB_USER"),
+				os.Getenv("DB_PASSWORD"),
+			),
 		},
 	}
 

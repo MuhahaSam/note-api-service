@@ -6,6 +6,7 @@ create table note (
     author text not null,
     text text,
     created_at timestamp not null default now(),
+    updated_at timestamp,
     deleted_at timestamp
 );
 

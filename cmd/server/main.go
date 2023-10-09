@@ -25,7 +25,12 @@ func main() {
 	}
 
 	server := grpc.NewServer()
-	note := note_v1.NewNote().New()
+	note := note_v1.NewNote()
+	err = note.Init()
+	if err != nil {
+		log.Fatalf("failed init project: %s ", err.Error())
+	}
+
 	desc.RegisterNoteServiceServer(server, note)
 
 	fmt.Printf("server is running on port: %s \n", port)

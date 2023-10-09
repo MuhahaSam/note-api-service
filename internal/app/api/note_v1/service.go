@@ -10,9 +10,12 @@ type Note struct {
 	desc.NoteServiceServer
 }
 
-func (n *Note) New() *Note {
-	db.GetDbModule().Open(&config.GetConfig().DbConfig)
-	return n
+func (n *Note) Init() error {
+	err := db.GetDbModule().Open(&config.GetConfig().DbConfig)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (n *Note) Destructor() {
