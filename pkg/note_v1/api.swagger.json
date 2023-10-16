@@ -43,7 +43,7 @@
         ]
       }
     },
-    "/note/v1/api/{uuid}": {
+    "/note/v1/api/uuid/{uuid}": {
       "get": {
         "operationId": "NoteService_GetNote",
         "responses": {
@@ -65,8 +65,7 @@
             "name": "uuid",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           }
         ],
         "tags": [
@@ -94,8 +93,7 @@
             "name": "uuid",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           }
         ],
         "tags": [
@@ -123,8 +121,7 @@
             "name": "uuid",
             "in": "path",
             "required": true,
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           },
           {
             "name": "body",
@@ -160,8 +157,7 @@
       "type": "object",
       "properties": {
         "uuid": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         }
       }
     },
@@ -169,8 +165,7 @@
       "type": "object",
       "properties": {
         "uuid": {
-          "type": "string",
-          "format": "byte"
+          "type": "string"
         },
         "title": {
           "type": "string"

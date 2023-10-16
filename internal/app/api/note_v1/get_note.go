@@ -10,14 +10,14 @@ import (
 )
 
 func (n *Note) GetNote(ctx context.Context, req *desc.GetNoteRequest) (*desc.GetNoteResponse, error) {
-	note, err := repository.GetNoteRepository().Read(ctx, uuid.UUID(req.Uuid))
+	note, err := repository.GetNoteRepository().Read(ctx, uuid.MustParse(req.Uuid))
 	if err != nil {
 		log.Printf("error while reading note: %s", err.Error())
 		return nil, err
 	}
 
 	return &desc.GetNoteResponse{
-		Uuid:   note.Id[:],
+		Uuid:   note.Id.String(),
 		Title:  note.Title,
 		Author: note.Author,
 		Text:   note.Text,

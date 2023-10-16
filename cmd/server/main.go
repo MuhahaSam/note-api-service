@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"sync"
 
+	grpcValidator "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 
 	"github.com/MuhahaSam/golangPractice/config"
@@ -43,7 +44,7 @@ func startGRPC() error {
 		log.Fatalf("failed mapping port: %s ", err.Error())
 	}
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(grpc.UnaryInterceptor(grpcValidator.UnaryServerInterceptor()))
 	note := note_v1.NewNote()
 	err = note.Init()
 	if err != nil {

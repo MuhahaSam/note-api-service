@@ -35,6 +35,9 @@ var (
 	_ = sort.Sort
 )
 
+// define the regex for a UUID once up-front
+var _note_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
 // Validate checks the field values on CreateNoteRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -57,11 +60,38 @@ func (m *CreateNoteRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Title
+	if utf8.RuneCountInString(m.GetTitle()) < 1 {
+		err := CreateNoteRequestValidationError{
+			field:  "Title",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Text
+	if utf8.RuneCountInString(m.GetText()) < 1 {
+		err := CreateNoteRequestValidationError{
+			field:  "Text",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Author
+	if utf8.RuneCountInString(m.GetAuthor()) < 1 {
+		err := CreateNoteRequestValidationError{
+			field:  "Author",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return CreateNoteRequestMultiError(errors)
@@ -269,10 +299,28 @@ func (m *GetNoteRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Uuid
+	if err := m._validateUuid(m.GetUuid()); err != nil {
+		err = GetNoteRequestValidationError{
+			field:  "Uuid",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetNoteRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *GetNoteRequest) _validateUuid(uuid string) error {
+	if matched := _note_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -479,91 +527,49 @@ func (m *UpdateNoteBody) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetTitle()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateNoteBodyValidationError{
-					field:  "Title",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateNoteBodyValidationError{
-					field:  "Title",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetTitle()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateNoteBodyValidationError{
+	if wrapper := m.GetTitle(); wrapper != nil {
+
+		if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
+			err := UpdateNoteBodyValidationError{
 				field:  "Title",
-				reason: "embedded message failed validation",
-				cause:  err,
+				reason: "value length must be at least 1 runes",
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
+
 	}
 
-	if all {
-		switch v := interface{}(m.GetText()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateNoteBodyValidationError{
-					field:  "Text",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateNoteBodyValidationError{
-					field:  "Text",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetText()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateNoteBodyValidationError{
+	if wrapper := m.GetText(); wrapper != nil {
+
+		if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
+			err := UpdateNoteBodyValidationError{
 				field:  "Text",
-				reason: "embedded message failed validation",
-				cause:  err,
+				reason: "value length must be at least 1 runes",
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
+
 	}
 
-	if all {
-		switch v := interface{}(m.GetAuthor()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateNoteBodyValidationError{
-					field:  "Author",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateNoteBodyValidationError{
-					field:  "Author",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAuthor()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateNoteBodyValidationError{
+	if wrapper := m.GetAuthor(); wrapper != nil {
+
+		if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
+			err := UpdateNoteBodyValidationError{
 				field:  "Author",
-				reason: "embedded message failed validation",
-				cause:  err,
+				reason: "value length must be at least 1 runes",
 			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
+
 	}
 
 	if len(errors) > 0 {
@@ -666,7 +672,17 @@ func (m *UpdateNoteRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Uuid
+	if err := m._validateUuid(m.GetUuid()); err != nil {
+		err = UpdateNoteRequestValidationError{
+			field:  "Uuid",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetUpdateBody()).(type) {
@@ -699,6 +715,14 @@ func (m *UpdateNoteRequest) validate(all bool) error {
 
 	if len(errors) > 0 {
 		return UpdateNoteRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *UpdateNoteRequest) _validateUuid(uuid string) error {
+	if matched := _note_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -799,10 +823,28 @@ func (m *DeleteNoteRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Uuid
+	if err := m._validateUuid(m.GetUuid()); err != nil {
+		err = DeleteNoteRequestValidationError{
+			field:  "Uuid",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteNoteRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *DeleteNoteRequest) _validateUuid(uuid string) error {
+	if matched := _note_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil

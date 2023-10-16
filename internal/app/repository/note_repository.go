@@ -45,7 +45,7 @@ func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateNote
 func (r *NoteRepository) Read(ctx context.Context, uuid uuid.UUID) (*entity.NoteEntity, error) {
 	query, args, err := sq.Select("id, author, title, text").
 		From("note").
-		Where("id = $1 and deleted_at is null", uuid).
+		Where("id = $1 and deleted_at is null", uuid.String()).
 		ToSql()
 	if err != nil {
 		return nil, err

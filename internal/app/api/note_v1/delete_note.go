@@ -11,7 +11,7 @@ import (
 )
 
 func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*emptypb.Empty, error) {
-	err := repository.GetNoteRepository().Delete(uuid.UUID(req.Uuid))
+	err := repository.GetNoteRepository().Delete(uuid.MustParse(req.Uuid))
 	if err != nil {
 		log.Printf("error while reading note: %s", err.Error())
 		return nil, err
