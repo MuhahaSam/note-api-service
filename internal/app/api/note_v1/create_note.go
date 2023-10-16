@@ -16,6 +16,6 @@ func (n *Note) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*de
 	}
 
 	return &desc.CreateNoteResponse{
-		Uuid: &desc.UUID{Value: id[:]},
+		Uuid: id[:],
 	}, nil
 }

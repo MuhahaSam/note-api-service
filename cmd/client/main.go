@@ -29,7 +29,7 @@ func main() {
 		Author: "Sam",
 	})
 
-	uuid := &desc.UUID{Value: createRes.Uuid.Value}
+	uuid := createRes.Uuid
 
 	log.Println("note Id: ", createRes.Uuid)
 

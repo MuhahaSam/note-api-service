@@ -12,6 +12,8 @@ type DbConfig struct {
 
 type Config struct {
 	DbConfig DbConfig
+	GrpcHost string
+	HttpHost string
 }
 
 var config *Config = nil
@@ -32,6 +34,8 @@ func GetConfig() *Config {
 				os.Getenv("DB_PASSWORD"),
 			),
 		},
+		GrpcHost: os.Getenv("GRPC_HOST"),
+		HttpHost: os.Getenv("HTTP_HOST"),
 	}
 
 	return config
