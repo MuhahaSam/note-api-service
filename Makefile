@@ -1,11 +1,3 @@
-# PHONY: generate
-# generate:
-# 	mkdir -p pkg/note_v1
-# 	protoc	--proto_path api/note_v1 \
-# 			--go_out=pkg/note_v1 --go_opt=paths=source_relative \
-# 			--go-grpc_out=pkg/note_v1 --go-grpc_opt=paths=source_relative \
-# 			api/note_v1/note.proto
-
 PHONY: generate
 generate:
 		mkdir -p pkg/note_v1
@@ -15,11 +7,8 @@ generate:
 				--grpc-gateway_out=pkg/note_v1 \
 				--grpc-gateway_opt=logtostderr=true \
 				--grpc-gateway_opt=paths=source_relative \
-				--validate_out lang=go:pkg/note_v1\
-				--swagger_out=allow_merge=true,merge_file_name=api:pkg/note_v1 \
+				--validate_out lang=go:pkg/note_v1 --validate_opt=paths=source_relative\
 				api/note_v1/note.proto
-		mv pkg/note_v1/github.com/MuhahaSam/golangPractice/pkg/note_v1/* pkg/note_v1/
-		rm -rf pkg/note_v1/github.com
 
 server-start: go run .\cmd\server\main.go
 client-start: go run .\cmd\client\main.go

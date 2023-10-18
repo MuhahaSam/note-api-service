@@ -11,7 +11,63 @@
     "application/json"
   ],
   "paths": {
-    "/note/v1/api": {
+    "/api/v1/note": {
+      "get": {
+        "operationId": "NoteService_GetNote",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/node_v1GetNoteResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "NoteService"
+        ]
+      },
+      "delete": {
+        "operationId": "NoteService_DeleteNote",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "NoteService"
+        ]
+      },
       "post": {
         "operationId": "NoteService_CreateNote",
         "responses": {
@@ -41,66 +97,8 @@
         "tags": [
           "NoteService"
         ]
-      }
-    },
-    "/note/v1/api/uuid/{uuid}": {
-      "get": {
-        "operationId": "NoteService_GetNote",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/node_v1GetNoteResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "NoteService"
-        ]
       },
-      "delete": {
-        "operationId": "NoteService_DeleteNote",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "NoteService"
-        ]
-      },
-      "put": {
+      "patch": {
         "operationId": "NoteService_UpdateNote",
         "responses": {
           "200": {
@@ -118,17 +116,11 @@
         },
         "parameters": [
           {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/node_v1UpdateNoteBody"
+              "$ref": "#/definitions/node_v1UpdateNoteRequest"
             }
           }
         ],
@@ -189,6 +181,17 @@
         },
         "author": {
           "type": "string"
+        }
+      }
+    },
+    "node_v1UpdateNoteRequest": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string"
+        },
+        "updateBody": {
+          "$ref": "#/definitions/node_v1UpdateNoteBody"
         }
       }
     },

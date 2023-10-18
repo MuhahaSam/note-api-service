@@ -2,12 +2,14 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/MuhahaSam/golangPractice/internal/app/db"
 	"github.com/MuhahaSam/golangPractice/internal/app/entity"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
+	"github.com/fatih/structs"
 	"github.com/google/uuid"
 )
 
@@ -15,7 +17,7 @@ type NoteRepository struct {
 	Repository
 }
 
-func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateNoteRequest) (*uuid.UUID, error) {
+func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateRequest) (*uuid.UUID, error) {
 	query, args, err := sq.Insert("note").
 		PlaceholderFormat(sq.Dollar).
 		Columns("author, title, text").
@@ -42,11 +44,12 @@ func (r *NoteRepository) Create(ctx context.Context, createNote *desc.CreateNote
 	return &id, nil
 }
 
-func (r *NoteRepository) Read(ctx context.Context, uuid uuid.UUID) (*entity.NoteEntity, error) {
+func (r *NoteRepository) Get(ctx context.Context, uuid string) (*entity.NoteEntity, error) {
 	query, args, err := sq.Select("id, author, title, text").
 		From("note").
-		Where("id = $1 and deleted_at is null", uuid.String()).
+		Where(sq.Eq{"id": uuid, "deleted_at": nil}).
 		ToSql()
+
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +70,19 @@ func (r *NoteRepository) Read(ctx context.Context, uuid uuid.UUID) (*entity.Note
 	return note, nil
 }
 
-func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) error {
+func (e *NoteRepository) Update(uuid string, updateBody *desc.UpdateBody) error {
+	updateBodyMap := structs.Map(updateBody)
+
+	for key, val := range updateBodyMap {
+		stringVal := fmt.Sprintf("%#v", val)
+		if len(stringVal) <= 2 {
+			delete(updateBodyMap, key)
+		}
+	}
+
 	query, args, err := sq.Update("note").
-		Set("author", updateBody.GetAuthor().Value).
-		Set("title", updateBody.GetTitle().Value).
-		Set("text", updateBody.GetText().Value).
-		Set("updated_at", time.Now()).
-		Where(sq.Eq{"id": id}).
+		SetMap(updateBodyMap).
+		Where(sq.Eq{"id": uuid}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
@@ -89,10 +98,10 @@ func (e *NoteRepository) Update(id uuid.UUID, updateBody *desc.UpdateNoteBody) e
 	return nil
 }
 
-func (r *NoteRepository) Delete(id uuid.UUID) error {
+func (r *NoteRepository) Delete(uuid string) error {
 	query, args, err := sq.Update("note").
 		Set("deleted_at", time.Now()).
-		Where(sq.Eq{"id": id}).
+		Where(sq.Eq{"id": uuid}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

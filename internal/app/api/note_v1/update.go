@@ -6,12 +6,11 @@ import (
 
 	"github.com/MuhahaSam/golangPractice/internal/app/repository"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
-	"github.com/google/uuid"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) UpdateNote(ctx context.Context, req *desc.UpdateNoteRequest) (*emptypb.Empty, error) {
-	err := repository.GetNoteRepository().Update(uuid.MustParse(req.GetUuid()), req.GetUpdateBody())
+func (n *Note) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
+	err := repository.GetNoteRepository().Update(req.GetUuid(), req.GetUpdateBody())
 	if err != nil {
 		log.Printf("error while update note: %s", err.Error())
 		return nil, err

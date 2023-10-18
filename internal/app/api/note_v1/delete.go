@@ -6,12 +6,11 @@ import (
 
 	"github.com/MuhahaSam/golangPractice/internal/app/repository"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
-	"github.com/google/uuid"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (n *Note) DeleteNote(ctx context.Context, req *desc.DeleteNoteRequest) (*emptypb.Empty, error) {
-	err := repository.GetNoteRepository().Delete(uuid.MustParse(req.Uuid))
+func (n *Note) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+	err := repository.GetNoteRepository().Delete(req.GetUuid())
 	if err != nil {
 		log.Printf("error while reading note: %s", err.Error())
 		return nil, err

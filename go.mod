@@ -13,6 +13,7 @@ require (
 
 require (
 	github.com/Masterminds/squirrel v1.5.4 // indirect
+	github.com/fatih/structs v1.1.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/golang/glog v1.1.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

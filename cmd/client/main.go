@@ -6,7 +6,6 @@ import (
 
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 	"google.golang.org/grpc"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const address = "localhost:50051"
@@ -21,9 +20,9 @@ func main() {
 	ctx := context.Background()
 	client := desc.NewNoteServiceClient(con)
 
-	var createRes *desc.CreateNoteResponse
+	var createRes *desc.CreateResponse
 
-	createRes, err = client.CreateNote(ctx, &desc.CreateNoteRequest{
+	createRes, err = client.CreateNote(ctx, &desc.CreateRequest{
 		Title:  "Wow",
 		Text:   "Note created",
 		Author: "Sam",
@@ -33,29 +32,29 @@ func main() {
 
 	log.Println("note Id: ", createRes.Uuid)
 
-	getRes, err := client.GetNote(ctx, &desc.GetNoteRequest{
+	getRes, err := client.GetNote(ctx, &desc.GetRequest{
 		Uuid: uuid,
 	})
 
 	log.Println("read note: ", getRes)
 
-	_, err = client.UpdateNote(ctx, &desc.UpdateNoteRequest{
+	_, err = client.UpdateNote(ctx, &desc.UpdateRequest{
 		Uuid: uuid,
-		UpdateBody: &desc.UpdateNoteBody{
-			Author: &wrapperspb.StringValue{Value: "kim"},
-			Title:  &wrapperspb.StringValue{Value: "Kim's story"},
-			Text:   &wrapperspb.StringValue{Value: "This is my first crud on go"},
+		UpdateBody: &desc.UpdateBody{
+			Author: "kim",
+			Title:  "Kim's story",
+			Text:   "This is my first crud on go",
 		},
 	})
 
-	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
+	getRes, err = client.GetNote(ctx, &desc.GetRequest{
 		Uuid: uuid,
 	})
 
 	log.Println("read note after update: ", getRes)
 
-	_, err = client.DeleteNote(ctx, &desc.DeleteNoteRequest{Uuid: uuid})
-	getRes, err = client.GetNote(ctx, &desc.GetNoteRequest{
+	_, err = client.DeleteNote(ctx, &desc.DeleteRequest{Uuid: uuid})
+	getRes, err = client.GetNote(ctx, &desc.GetRequest{
 		Uuid: uuid,
 	})
 	if err != nil {

@@ -28,11 +28,17 @@ func main() {
 
 	go func() {
 		defer wg.Done()
-		startGRPC()
+		err := startGRPC()
+		if err != nil {
+			log.Fatalf("error during starting grpc service: %s", err)
+		}
 	}()
 	go func() {
 		defer wg.Done()
-		startHTTP()
+		err := startHTTP()
+		if err != nil {
+			log.Fatalf("error during starting http service: %s", err)
+		}
 	}()
 
 	wg.Wait()
@@ -41,14 +47,16 @@ func main() {
 func startGRPC() error {
 	list, err := net.Listen("tcp", config.GetConfig().GrpcHost)
 	if err != nil {
-		log.Fatalf("failed mapping port: %s ", err.Error())
+		log.Printf("failed mapping port: %s ", err.Error())
+		return err
 	}
 
 	server := grpc.NewServer(grpc.UnaryInterceptor(grpcValidator.UnaryServerInterceptor()))
 	note := note_v1.NewNote()
 	err = note.Init()
 	if err != nil {
-		log.Fatalf("failed init project: %s ", err.Error())
+		log.Printf("failed init project: %s ", err.Error())
+		return err
 	}
 
 	desc.RegisterNoteServiceServer(server, note)
@@ -57,14 +65,14 @@ func startGRPC() error {
 
 	defer note.Destructor()
 	if err = server.Serve(list); err != nil {
-		log.Fatalf("failed serve: %s ", err.Error())
+		log.Printf("failed serve: %s ", err.Error())
 		return err
 	}
+
 	return nil
 }
 
 func startHTTP() error {
-
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -73,6 +81,7 @@ func startHTTP() error {
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err := desc.RegisterNoteServiceHandlerFromEndpoint(ctx, mux, config.GetConfig().GrpcHost, opts)
 	if err != nil {
+		log.Printf("error during http server : %s ", err.Error())
 		return err
 	}
 

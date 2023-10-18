@@ -8,14 +8,14 @@ import (
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 )
 
-func (n *Note) CreateNote(ctx context.Context, req *desc.CreateNoteRequest) (*desc.CreateNoteResponse, error) {
+func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	id, err := repository.GetNoteRepository().Create(ctx, req)
 	if err != nil {
 		log.Printf("error while creating note: %s", err.Error())
 		return nil, err
 	}
 
-	return &desc.CreateNoteResponse{
+	return &desc.CreateResponse{
 		Uuid: id.String(),
 	}, nil
 }

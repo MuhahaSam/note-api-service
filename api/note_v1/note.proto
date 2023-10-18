@@ -10,64 +10,68 @@ import "validate/validate.proto";
 option go_package = "github.com/MuhahaSam/golangPractice/pkg/note_v1";
 
 service NoteService {
-    rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse){
+    rpc CreateNote (CreateRequest) returns (CreateResponse){
         option (google.api.http) = {
-            post: "/note/v1/api"
+            post: "/api/v1/note"
             body: "*"
         };
     };
-    rpc GetNote (GetNoteRequest) returns (GetNoteResponse){
+
+    rpc GetNote (GetRequest) returns (GetResponse){
         option (google.api.http) = {
-            get: "/note/v1/api/uuid/{uuid}"
+            get: "/api/v1/note"
         };
     };
-    rpc UpdateNote (UpdateNoteRequest) returns (google.protobuf.Empty){
+
+    rpc UpdateNote (UpdateRequest) returns (google.protobuf.Empty){
         option (google.api.http) = {
-            put: "/note/v1/api/uuid/{uuid}"
-            body: "updateBody"
+            patch: "/api/v1/note"
+            body: "*"
         };
     };
-    rpc DeleteNote (DeleteNoteRequest) returns (google.protobuf.Empty){
+
+    rpc DeleteNote (DeleteRequest) returns (google.protobuf.Empty){
         option (google.api.http) = {
-            delete: "/note/v1/api/uuid/{uuid}"
+            delete: "/api/v1/note"
         };
     };
 }
 
-message CreateNoteRequest {
+message CreateRequest {
     string title = 1 [(validate.rules).string.min_len = 1];
     string text = 2 [(validate.rules).string.min_len = 1];
     string author = 3 [(validate.rules).string.min_len = 1];
 }
 
-message CreateNoteResponse {
+message CreateResponse {
     string uuid = 1;
 }
 
-message GetNoteRequest {
+message GetRequest {
     string uuid = 1 [(validate.rules).string.uuid = true];
 }
 
-message GetNoteResponse {
+message GetResponse {
     string uuid = 1;
     string title = 2;
     string text = 3;
     string author = 4;
 }
 
-message UpdateNoteBody {
-    google.protobuf.StringValue title = 1 [(validate.rules).string.min_len = 1];
-    google.protobuf.StringValue text = 2 [(validate.rules).string.min_len = 1];
-    google.protobuf.StringValue author = 3 [(validate.rules).string.min_len = 1];
+message UpdateBody {
+    string title = 1 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
 
+    string text = 2 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
+
+    string author = 3 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
 }
 
-message UpdateNoteRequest {
+message UpdateRequest {
     string uuid = 1 [(validate.rules).string.uuid = true];
-    UpdateNoteBody updateBody = 2;
+    UpdateBody updateBody = 2;
 }
 
-message DeleteNoteRequest {
+message DeleteRequest {
     string uuid = 1 [(validate.rules).string.uuid = true];
 }
 
