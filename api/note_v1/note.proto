@@ -59,11 +59,9 @@ message GetResponse {
 }
 
 message UpdateBody {
-    string title = 1 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
-
-    string text = 2 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
-
-    string author = 3 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
+    google.protobuf.StringValue title = 1 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
+    google.protobuf.StringValue text = 2 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
+    google.protobuf.StringValue author = 3 [(validate.rules).string = {ignore_empty: true, min_len: 1}];
 }
 
 message UpdateRequest {

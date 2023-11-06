@@ -2,88 +2,32 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"log"
-	"net"
-	"net/http"
-	"sync"
+	"time"
 
-	grpcValidator "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-
-	"github.com/MuhahaSam/golangPractice/config"
-	"github.com/MuhahaSam/golangPractice/internal/app/api/note_v1"
-	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
-	"github.com/joho/godotenv"
-	"google.golang.org/grpc"
+	"github.com/MuhahaSam/golangPractice/internal/app"
 )
 
+var pathConfig string
+
+func init() {
+	flag.StringVar(&pathConfig, "config", "./note_config.json", "Path to configuration file")
+	time.Local = time.UTC
+}
+
 func main() {
-	wg := sync.WaitGroup{}
-	wg.Add(2)
-	err := godotenv.Load("./config.env")
-	if err != nil {
-		log.Fatalf("error during reading env file Err: %s", err)
-	}
+	flag.Parse()
 
-	go func() {
-		defer wg.Done()
-		err := startGRPC()
-		if err != nil {
-			log.Fatalf("error during starting grpc service: %s", err)
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		err := startHTTP()
-		if err != nil {
-			log.Fatalf("error during starting http service: %s", err)
-		}
-	}()
-
-	wg.Wait()
-}
-
-func startGRPC() error {
-	list, err := net.Listen("tcp", config.GetConfig().GrpcHost)
-	if err != nil {
-		log.Printf("failed mapping port: %s ", err.Error())
-		return err
-	}
-
-	server := grpc.NewServer(grpc.UnaryInterceptor(grpcValidator.UnaryServerInterceptor()))
-	note := note_v1.NewNote()
-	err = note.Init()
-	if err != nil {
-		log.Printf("failed init project: %s ", err.Error())
-		return err
-	}
-
-	desc.RegisterNoteServiceServer(server, note)
-
-	fmt.Printf("server is running on port: %s \n", config.GetConfig().GrpcHost)
-
-	defer note.Destructor()
-	if err = server.Serve(list); err != nil {
-		log.Printf("failed serve: %s ", err.Error())
-		return err
-	}
-
-	return nil
-}
-
-func startHTTP() error {
 	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
 
-	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	err := desc.RegisterNoteServiceHandlerFromEndpoint(ctx, mux, config.GetConfig().GrpcHost, opts)
+	a, err := app.NewApp(ctx, pathConfig)
 	if err != nil {
-		log.Printf("error during http server : %s ", err.Error())
-		return err
+		log.Fatalf("Can't create app: %s", err.Error())
 	}
 
-	return http.ListenAndServe(config.GetConfig().HttpHost, mux)
+	err = a.Run()
+	if err != nil {
+		log.Fatalf("Can't run app: %s", err.Error())
+	}
 }

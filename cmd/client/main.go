@@ -6,6 +6,7 @@ import (
 
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 const address = "localhost:50051"
@@ -41,9 +42,9 @@ func main() {
 	_, err = client.UpdateNote(ctx, &desc.UpdateRequest{
 		Uuid: uuid,
 		UpdateBody: &desc.UpdateBody{
-			Author: "kim",
-			Title:  "Kim's story",
-			Text:   "This is my first crud on go",
+			Author: &wrapperspb.StringValue{Value: "kim"},
+			Title:  &wrapperspb.StringValue{Value: "Kim's story"},
+			Text:   &wrapperspb.StringValue{Value: "Kim's story"},
 		},
 	})
 

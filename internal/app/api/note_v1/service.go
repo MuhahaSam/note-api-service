@@ -1,27 +1,40 @@
 package note_v1
 
 import (
-	"github.com/MuhahaSam/golangPractice/config"
-	db "github.com/MuhahaSam/golangPractice/internal/app/db"
+	"github.com/MuhahaSam/golangPractice/internal/service/note"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 )
 
-type Note struct {
-	desc.NoteServiceServer
+type Implementation struct {
+	desc.UnimplementedNoteServiceServer
+
+	noteService *note.Service
 }
 
-func (n *Note) Init() error {
-	err := db.GetDbModule().Open(&config.GetConfig().DbConfig)
-	if err != nil {
-		return err
+func NewNoteV1(eventService *note.Service) *Implementation {
+	return &Implementation{
+		desc.UnimplementedNoteServiceServer{},
+
+		eventService,
 	}
-	return nil
 }
 
-func (n *Note) Destructor() {
-	db.GetDbModule().Close()
-}
+// type Note struct {
+// 	desc.NoteServiceServer
+// }
 
-func NewNote() *Note {
-	return &Note{}
-}
+// func (n *Note) Init() error {
+// 	err := db.GetDbModule().Open(&config.GetConfig().DbConfig)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// func (n *Note) Destructor() {
+// 	db.GetDbModule().Close()
+// }
+
+// func NewNote() *Note {
+// 	return &Note{}
+// }
