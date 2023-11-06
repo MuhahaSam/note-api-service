@@ -1,0 +1,17 @@
+{
+    "db": {
+        "dsn": "user=postgres dbname=note password=postgres host=localhost port=5433",
+        "max_open_connections": 10
+    },
+    "logger": {
+        "show_time": true
+    },
+    "grpc": {
+        "host": "localhost",
+        "port": "7002"
+    },
+    "http": {
+        "host": "localhost",
+        "port": "7000"
+    }
+}

@@ -4,18 +4,19 @@ import (
 	"context"
 	"log"
 
-	"github.com/MuhahaSam/golangPractice/internal/app/repository"
 	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 )
 
-func (n *Note) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	id, err := repository.GetNoteRepository().Create(ctx, req)
+func (n *Implementation) CreateNote(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+
+	id, err := n.noteService.Create(ctx, req)
+
 	if err != nil {
-		log.Printf("error while creating note: %s", err.Error())
+		log.Printf("error while reading note: %s", err.Error())
 		return nil, err
 	}
 
 	return &desc.CreateResponse{
-		Uuid: id.String(),
+		Uuid: *id,
 	}, nil
 }

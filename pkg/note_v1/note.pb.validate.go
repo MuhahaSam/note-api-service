@@ -521,47 +521,59 @@ func (m *UpdateBody) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetTitle() != "" {
+	if wrapper := m.GetTitle(); wrapper != nil {
 
-		if utf8.RuneCountInString(m.GetTitle()) < 1 {
-			err := UpdateBodyValidationError{
-				field:  "Title",
-				reason: "value length must be at least 1 runes",
+		if wrapper.GetValue() != "" {
+
+			if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
+				err := UpdateBodyValidationError{
+					field:  "Title",
+					reason: "value length must be at least 1 runes",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
 			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+
 		}
 
 	}
 
-	if m.GetText() != "" {
+	if wrapper := m.GetText(); wrapper != nil {
 
-		if utf8.RuneCountInString(m.GetText()) < 1 {
-			err := UpdateBodyValidationError{
-				field:  "Text",
-				reason: "value length must be at least 1 runes",
+		if wrapper.GetValue() != "" {
+
+			if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
+				err := UpdateBodyValidationError{
+					field:  "Text",
+					reason: "value length must be at least 1 runes",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
 			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+
 		}
 
 	}
 
-	if m.GetAuthor() != "" {
+	if wrapper := m.GetAuthor(); wrapper != nil {
 
-		if utf8.RuneCountInString(m.GetAuthor()) < 1 {
-			err := UpdateBodyValidationError{
-				field:  "Author",
-				reason: "value length must be at least 1 runes",
+		if wrapper.GetValue() != "" {
+
+			if utf8.RuneCountInString(wrapper.GetValue()) < 1 {
+				err := UpdateBodyValidationError{
+					field:  "Author",
+					reason: "value length must be at least 1 runes",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
 			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+
 		}
 
 	}
