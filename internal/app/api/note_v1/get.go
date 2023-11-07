@@ -8,7 +8,7 @@ import (
 )
 
 func (n *Implementation) GetNote(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse, error) {
-	note, err := n.noteService.Get(ctx, req)
+	note, err := n.noteService.Get(ctx, req.GetUuid())
 	if err != nil {
 		log.Printf("error while reading note: %s", err.Error())
 		return nil, err

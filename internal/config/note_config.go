@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"strings"
 
@@ -74,7 +73,6 @@ func (c *NoteConfig) GetLoggerConfig() *LoggerConf {
 // GetDBConfig ...
 func (c *NoteConfig) GetDBConfig() (*pgxpool.Config, error) {
 	dbDsn := strings.ReplaceAll(c.DB.DSN, dbPassEscSeq, os.Getenv("DB_PASSWORD"))
-	fmt.Println(dbDsn)
 
 	poolConfig, err := pgxpool.ParseConfig(dbDsn)
 	if err != nil {

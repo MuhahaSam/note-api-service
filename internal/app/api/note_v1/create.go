@@ -8,9 +8,7 @@ import (
 )
 
 func (n *Implementation) CreateNote(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-
 	id, err := n.noteService.Create(ctx, req)
-
 	if err != nil {
 		log.Printf("error while reading note: %s", err.Error())
 		return nil, err

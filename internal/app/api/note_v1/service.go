@@ -18,23 +18,3 @@ func NewNoteV1(eventService *note.Service) *Implementation {
 		eventService,
 	}
 }
-
-// type Note struct {
-// 	desc.NoteServiceServer
-// }
-
-// func (n *Note) Init() error {
-// 	err := db.GetDbModule().Open(&config.GetConfig().DbConfig)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
-// func (n *Note) Destructor() {
-// 	db.GetDbModule().Close()
-// }
-
-// func NewNote() *Note {
-// 	return &Note{}
-// }

@@ -2,14 +2,12 @@ package model
 
 import (
 	"database/sql"
-
-	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 type NoteUpdateBody struct {
-	Author *wrapperspb.StringValue `db:"author"`
-	Title  *wrapperspb.StringValue `db:"title"`
-	Text   *wrapperspb.StringValue `db:"text"`
+	Author sql.NullString `db:"author"`
+	Title  sql.NullString `db:"title"`
+	Text   sql.NullString `db:"text"`
 }
 
 type NoteInfo struct {

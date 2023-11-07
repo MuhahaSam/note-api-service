@@ -5,11 +5,10 @@ import (
 	"log"
 
 	"github.com/MuhahaSam/golangPractice/internal/model"
-	desc "github.com/MuhahaSam/golangPractice/pkg/note_v1"
 )
 
-func (n *Service) Get(ctx context.Context, req *desc.GetRequest) (*model.NoteEntity, error) {
-	note, err := n.noteRepository.Get(ctx, req.GetUuid())
+func (n *Service) Get(ctx context.Context, uuid string) (*model.NoteEntity, error) {
+	note, err := n.noteRepository.Get(ctx, uuid)
 	if err != nil {
 		log.Printf("error while reading note: %s", err.Error())
 		return nil, err
