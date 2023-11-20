@@ -1,5 +1,6 @@
 package repository
 
+//go:generate mockgen --build_flags=--mod=mod -destination=mock/mock_note_repository.go -package=mocks . NoteRepositoryInterface
 import (
 	"context"
 	"errors"
@@ -8,7 +9,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/MuhahaSam/golangPractice/internal/db"
 	"github.com/MuhahaSam/golangPractice/internal/model"
-	"github.com/google/uuid"
 )
 
 const (
@@ -22,18 +22,17 @@ const (
 	DeletedAt  = "deleted_at"
 )
 
+type NoteRepositoryInterface interface {
+	Create(ctx context.Context, note *model.NoteEntity) (*string, error)
+	Get(ctx context.Context, uuid string) (*model.NoteEntity, error)
+	Update(ctx context.Context, uuid string, noteInfo *model.NoteUpdateBody) error
+	Delete(ctx context.Context, uuid string) error
+}
 type NoteRepository struct {
 	db db.Client
 }
 
-// NewEventRepository ...
-func NewNoteRepository(db db.Client) *NoteRepository {
-	return &NoteRepository{
-		db: db,
-	}
-}
-
-func (r *NoteRepository) Create(ctx context.Context, note *model.NoteEntity) (*uuid.UUID, error) {
+func (r *NoteRepository) Create(ctx context.Context, note *model.NoteEntity) (*string, error) {
 	query, args, err := sq.Insert(EntityName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(
@@ -59,7 +58,7 @@ func (r *NoteRepository) Create(ctx context.Context, note *model.NoteEntity) (*u
 	}
 	defer rows.Close()
 
-	var id uuid.UUID
+	var id string
 	if rows.Next() {
 		err = rows.Scan(&id)
 		if err != nil {
@@ -159,4 +158,10 @@ func (r *NoteRepository) Delete(ctx context.Context, uuid string) error {
 	}
 
 	return nil
+}
+
+func NewNoteRepository(db db.Client) *NoteRepository {
+	return &NoteRepository{
+		db: db,
+	}
 }

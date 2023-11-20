@@ -62,28 +62,19 @@ func (s *serviceProvider) GetConfig() *config.NoteConfig {
 	return s.config
 }
 
-func (s *serviceProvider) GetLogger() *logger.Logger {
-	if s.logger == nil {
-		s.logger = logger.New("note logger")
-	}
-
-	return s.logger
-}
-
 // GetNoteRepository ...
-func (s *serviceProvider) GetNoteRepository(ctx context.Context) repository.NoteRepository {
+func (s *serviceProvider) GetNoteRepository(ctx context.Context) *repository.NoteRepository {
 	if s.noteRepository == nil {
 		s.noteRepository = repository.NewNoteRepository(s.GetDB(ctx))
 	}
 
-	return *s.noteRepository
+	return s.noteRepository
 }
 
 // GetNoteService ...
 func (s *serviceProvider) GetNoteService(ctx context.Context) *note.Service {
 	if s.noteService == nil {
 		s.noteService = note.NewService(
-			s.GetLogger(),
 			s.GetNoteRepository(ctx),
 		)
 	}
