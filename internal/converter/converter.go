@@ -21,13 +21,13 @@ func ToNoteUpdateBody(updateBody *desc.UpdateBody) *model.NoteUpdateBody {
 	var modelUpdateBody = model.NoteUpdateBody{}
 
 	if updateBody.GetAuthor() != nil {
-		modelUpdateBody.Author = sql.NullString{String: updateBody.GetAuthor().Value}
+		modelUpdateBody.Author = sql.NullString{String: updateBody.GetAuthor().Value, Valid: true}
 	}
 	if updateBody.GetTitle() != nil {
 		modelUpdateBody.Title = sql.NullString{String: updateBody.GetTitle().Value, Valid: true}
 	}
 	if updateBody.GetText() != nil {
-		modelUpdateBody.Title = sql.NullString{String: updateBody.GetText().Value}
+		modelUpdateBody.Text = sql.NullString{String: updateBody.GetText().Value, Valid: true}
 	}
 	return &modelUpdateBody
 }

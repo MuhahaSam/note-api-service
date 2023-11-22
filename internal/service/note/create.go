@@ -15,7 +15,7 @@ func (n *Service) Create(ctx context.Context, req *desc.CreateRequest) (*string,
 		log.Printf("error while creating note: %s", err.Error())
 		return nil, err
 	}
-	var uuid string = id.String()
+	var uuid string = *id
 
 	return &uuid, nil
 }
